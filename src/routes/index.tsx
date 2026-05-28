@@ -53,6 +53,20 @@ export const Route = createFileRoute("/")({
 const WA_URL =
   "https://wa.me/5585989739830?text=Ol%C3%A1!%20Tenho%20interesse%20em%20conhecer%20melhor%20o%20Encantada%20Mente%20%7C%20Ber%C3%A7%C3%A1rio%20e%20Educa%C3%A7%C3%A3o%20Infantil%20e%20gostaria%20de%20saber%20mais%20informa%C3%A7%C3%B5es%20sobre%20matr%C3%ADcula%2C%20valores%20e%20disponibilidade.";
 
+function trackWhatsApp() {
+  if (typeof window === "undefined") return;
+  // Google Ads — Clique de saída
+  const gtagFn = (window as unknown as Record<string, unknown>).gtag as
+    | ((...args: unknown[]) => void)
+    | undefined;
+  gtagFn?.("event", "conversion", { send_to: "AW-18119200665/OsnuCJCxirUcEJmf9L9D" });
+  // RD Station
+  const rd = (window as unknown as Record<string, unknown>).RDStation as
+    | { Conversions?: { record?: (id: string) => void } }
+    | undefined;
+  rd?.Conversions?.record?.("botao-whatsapp-c3dee1bd1aaed91d58ed");
+}
+
 function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -74,12 +88,7 @@ function Index() {
 
 function WhatsAppFloat() {
   function handleClick() {
-    if (typeof window !== "undefined") {
-      const rd = (window as unknown as Record<string, unknown>).RDStation as
-        | { Conversions?: { record?: (id: string) => void } }
-        | undefined;
-      rd?.Conversions?.record?.("botao-whatsapp-c3dee1bd1aaed91d58ed");
-    }
+    trackWhatsApp();
   }
 
   return (
@@ -138,7 +147,7 @@ function Nav() {
           <a href="#contato" className="hover:text-foreground transition">Contato</a>
         </nav>
         <Button asChild className="rounded-full px-5">
-          <a href={WA_URL} target="_blank" rel="noreferrer">Agendar visita</a>
+          <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>Agendar visita</a>
         </Button>
       </div>
     </header>
@@ -162,10 +171,10 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Button asChild size="lg" className="rounded-full px-7 shadow-warm">
-              <a href={WA_URL} target="_blank" rel="noreferrer">Agende uma visita <ArrowRight className="w-4 h-4" /></a>
+              <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>Agende uma visita <ArrowRight className="w-4 h-4" /></a>
             </Button>
             <Button asChild size="lg" variant="outline" className="rounded-full px-7 bg-background">
-              <a href={WA_URL} target="_blank" rel="noreferrer">Falar no WhatsApp</a>
+              <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>Falar no WhatsApp</a>
             </Button>
           </div>
           <div className="mt-8 flex items-center gap-5 text-sm text-muted-foreground">
@@ -435,6 +444,7 @@ function LeadForm() {
 
     setLoading(true);
 
+    trackWhatsApp();
     trackRDConversion("agendamento-visita-formulario");
 
     const lines = [
