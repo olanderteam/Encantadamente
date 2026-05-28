@@ -53,18 +53,28 @@ export const Route = createFileRoute("/")({
 const WA_URL =
   "https://wa.me/5585989739830?text=Ol%C3%A1!%20Tenho%20interesse%20em%20conhecer%20melhor%20o%20Encantada%20Mente%20%7C%20Ber%C3%A7%C3%A1rio%20e%20Educa%C3%A7%C3%A3o%20Infantil%20e%20gostaria%20de%20saber%20mais%20informa%C3%A7%C3%B5es%20sobre%20matr%C3%ADcula%2C%20valores%20e%20disponibilidade.";
 
-function trackWhatsApp() {
+function gtagEvent(sendTo: string, extra?: Record<string, unknown>) {
   if (typeof window === "undefined") return;
-  // Google Ads — Clique de saída
-  const gtagFn = (window as unknown as Record<string, unknown>).gtag as
+  const fn = (window as unknown as Record<string, unknown>).gtag as
     | ((...args: unknown[]) => void)
     | undefined;
-  gtagFn?.("event", "conversion", { send_to: "AW-18119200665/OsnuCJCxirUcEJmf9L9D" });
-  // RD Station
+  fn?.("event", "conversion", { send_to: sendTo, ...extra });
+}
+
+function trackWhatsApp() {
+  gtagEvent("AW-18119200665/OsnuCJCxirUcEJmf9L9D");
   const rd = (window as unknown as Record<string, unknown>).RDStation as
     | { Conversions?: { record?: (id: string) => void } }
     | undefined;
   rd?.Conversions?.record?.("botao-whatsapp-c3dee1bd1aaed91d58ed");
+}
+
+function trackContato() {
+  gtagEvent("AW-18119200665/hcUkCOul87QcEJmf9L9D", { value: 1.0, currency: "BRL" });
+}
+
+function trackFormulario() {
+  gtagEvent("AW-18119200665/XZ-SCKjAirUcEJmf9L9D", { value: 1.0, currency: "BRL" });
 }
 
 function Index() {
@@ -445,6 +455,7 @@ function LeadForm() {
     setLoading(true);
 
     trackWhatsApp();
+    trackFormulario();
     trackRDConversion("agendamento-visita-formulario");
 
     const lines = [
@@ -478,7 +489,7 @@ function LeadForm() {
             e tiramos todas as suas dúvidas — pessoalmente.
           </p>
           <div className="mt-8 space-y-3 text-sm">
-            <a href="tel:+5585989739830" className="flex items-center gap-3 hover:text-primary transition">
+            <a href="tel:+5585989739830" className="flex items-center gap-3 hover:text-primary transition" onClick={trackContato}>
               <Phone className="w-4 h-4 text-primary" /> (85) 98973-9830
             </a>
             <div className="flex items-center gap-3">
