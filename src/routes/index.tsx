@@ -1,24 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import {
-  Heart, ShieldCheck, Clock, Sparkles, BookOpen, Users, MapPin, Phone, Instagram, Facebook, Mail, Sun, Star, ArrowRight,
+  Heart, ShieldCheck, Clock, Sparkles, BookOpen, Users, MapPin, Phone, Instagram, Mail, Sun, Star, ArrowRight,
 } from "lucide-react";
 import heroImg from "@/assets/hero-children.jpg";
+import heroImgWebp from "@/assets/hero-children.webp";
 import bercarioImg from "@/assets/bercario.jpg";
+import bercarioImgWebp from "@/assets/bercario.webp";
 import educacaoImg from "@/assets/educacao.jpg";
+import educacaoImgWebp from "@/assets/educacao.webp";
 import tempoImg from "@/assets/tempo-integral.jpg";
+import tempoImgWebp from "@/assets/tempo-integral.webp";
+import logo from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Encantadamente Creche — Berçário e Educação Infantil em Maraponga, Fortaleza" },
-      { name: "description", content: "Creche em Maraponga, Fortaleza com berçário, educação infantil, sistema de tempo integral e hotelzinho. Ambiente seguro e acolhedor. Agende uma visita." },
+      { name: "description", content: "Creche particular e escola infantil em Maraponga, Fortaleza, com berçário, educação infantil, tempo integral e hotelzinho. Ambiente seguro e acolhedor. Agende uma visita." },
       { property: "og:title", content: "Encantadamente Creche — Maraponga, Fortaleza" },
       { property: "og:description", content: "Onde a infância floresce: cuidado, carinho e educação em tempo integral." },
       { property: "og:url", content: "/" },
@@ -33,15 +39,31 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "ChildCare",
           name: "Encantadamente Creche",
-          image: "/og.jpg",
+          url: "https://www.crecheencantadamente.com/",
+          image: "https://www.crecheencantadamente.com/og.jpg",
           telephone: "+55 85 98973-9830",
+          priceRange: "$$",
           address: {
             "@type": "PostalAddress",
             streetAddress: "Rua Paurilo Barroso, 707",
             addressLocality: "Fortaleza",
             addressRegion: "CE",
+            postalCode: "60712-122",
             addressCountry: "BR",
           },
+          openingHoursSpecification: {
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            opens: "07:00",
+            closes: "18:00",
+          },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: "5",
+            reviewCount: "3",
+            bestRating: "5",
+          },
+          sameAs: ["https://www.instagram.com/encantadamentecreche/"],
           areaServed: "Maraponga, Fortaleza",
         }),
       },
@@ -77,6 +99,39 @@ function trackFormulario() {
   gtagEvent("AW-18119200665/XZ-SCKjAirUcEJmf9L9D", { value: 1.0, currency: "BRL" });
 }
 
+function Reveal({ children, className = "", delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -8% 0px" },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out will-change-transform ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+      } ${className}`}
+      style={{ transitionDelay: visible ? `${delay}ms` : "0ms" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 function Index() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -89,6 +144,7 @@ function Index() {
       <About />
       <Testimonials />
       <LeadForm />
+      <FAQ />
       <Location />
       <Footer />
       <WhatsAppFloat />
@@ -144,16 +200,14 @@ function Nav() {
   return (
     <header className="sticky top-0 z-40 backdrop-blur-md bg-background/80 border-b border-border/60">
       <div className="mx-auto max-w-7xl px-5 py-4 flex items-center justify-between">
-        <a href="#top" className="flex items-center gap-2">
-          <span className="grid place-items-center w-9 h-9 rounded-full bg-primary text-primary-foreground">
-            <Heart className="w-4 h-4" fill="currentColor" />
-          </span>
-          <span className="font-display text-xl font-semibold tracking-tight">Encantadamente</span>
+        <a href="#top" className="flex items-center">
+          <img src={logo} alt="Encantadamente Creche" width={132} height={52} className="h-11 w-auto" />
         </a>
         <nav className="hidden md:flex items-center gap-7 text-sm text-muted-foreground">
           <a href="#diferenciais" className="hover:text-foreground transition">Diferenciais</a>
           <a href="#servicos" className="hover:text-foreground transition">Serviços</a>
           <a href="#depoimentos" className="hover:text-foreground transition">Depoimentos</a>
+          <a href="#faq" className="hover:text-foreground transition">Dúvidas</a>
           <a href="#contato" className="hover:text-foreground transition">Contato</a>
         </nav>
         <Button asChild className="rounded-full px-5">
@@ -167,27 +221,49 @@ function Nav() {
 function Hero() {
   return (
     <section id="top" className="relative overflow-hidden bg-grain">
-      <div className="mx-auto max-w-7xl px-5 pt-14 pb-20 md:pt-20 md:pb-28 grid md:grid-cols-2 gap-12 items-center">
+      {/* Ambient floating shapes for depth */}
+      <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden>
+        <div className="absolute -top-24 -left-24 w-72 h-72 rounded-full opacity-40 blur-3xl animate-float-slow"
+          style={{ background: "var(--butter)" }} />
+        <div className="absolute top-1/3 -right-16 w-64 h-64 rounded-full opacity-30 blur-3xl animate-float-slower"
+          style={{ background: "var(--sage)" }} />
+      </div>
+
+      <div className="mx-auto max-w-7xl px-5 pt-14 pb-24 md:pt-20 md:pb-32 grid md:grid-cols-2 gap-12 items-center">
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full bg-accent/60 text-accent-foreground px-3 py-1 text-xs font-semibold">
+          <span className="inline-flex items-center gap-2 rounded-full bg-accent/60 text-accent-foreground px-3 py-1 text-xs font-semibold animate-in fade-in slide-in-from-bottom-2 duration-700">
             <Sun className="w-3.5 h-3.5" /> Matrículas abertas 2026
           </span>
-          <h1 className="mt-5 font-display text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.02] tracking-tight">
-            Onde a infância <em className="not-italic text-primary">floresce</em> com carinho.
+          <h1 className="mt-5 font-display text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.02] tracking-tight animate-in fade-in slide-in-from-bottom-3 duration-700 [animation-delay:100ms] [animation-fill-mode:backwards]">
+            Onde a infância{" "}
+            <span className="relative whitespace-nowrap not-italic text-primary">
+              floresce
+              <svg
+                className="absolute left-0 -bottom-1 w-full h-3 text-primary/40"
+                viewBox="0 0 200 12"
+                preserveAspectRatio="none"
+                aria-hidden
+              >
+                <path d="M2 9.5C40 3 90 2 100 5.5C110 9 160 10 198 4" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" />
+              </svg>
+            </span>{" "}
+            com carinho.
           </h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed">
+          <p className="mt-6 text-lg text-muted-foreground max-w-xl leading-relaxed animate-in fade-in slide-in-from-bottom-3 duration-700 [animation-delay:200ms] [animation-fill-mode:backwards]">
             Berçário e Educação Infantil em <strong className="text-foreground font-semibold">Maraponga, Fortaleza</strong>.
             Cuidado afetivo, desenvolvimento integral e tempo integral para a tranquilidade da sua família.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="rounded-full px-7 shadow-warm">
-              <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>Agende uma visita <ArrowRight className="w-4 h-4" /></a>
+          <div className="mt-8 flex flex-wrap gap-3 animate-in fade-in slide-in-from-bottom-3 duration-700 [animation-delay:300ms] [animation-fill-mode:backwards]">
+            <Button asChild size="lg" className="group rounded-full px-7 shadow-warm transition-transform hover:-translate-y-0.5 hover:shadow-xl">
+              <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>
+                Agende uma visita <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+              </a>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full px-7 bg-background">
+            <Button asChild size="lg" variant="outline" className="rounded-full px-7 bg-background transition-transform hover:-translate-y-0.5">
               <a href={WA_URL} target="_blank" rel="noreferrer" onClick={trackWhatsApp}>Falar no WhatsApp</a>
             </Button>
           </div>
-          <div className="mt-8 flex items-center gap-5 text-sm text-muted-foreground">
+          <div className="mt-8 flex items-center gap-5 text-sm text-muted-foreground animate-in fade-in duration-700 [animation-delay:400ms] [animation-fill-mode:backwards]">
             <div className="flex -space-x-2">
               {[0,1,2,3].map(i => (
                 <span key={i} className="w-8 h-8 rounded-full border-2 border-background"
@@ -203,16 +279,21 @@ function Hero() {
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative animate-in fade-in zoom-in-95 duration-700 [animation-delay:150ms] [animation-fill-mode:backwards]">
           <div className="absolute -inset-6 bg-accent/40 rounded-[2.5rem] -rotate-2" aria-hidden />
-          <img
-            src={heroImg}
-            alt="Crianças brincando alegremente na Encantadamente Creche"
-            width={1536}
-            height={1280}
-            className="relative rounded-[2rem] shadow-warm object-cover w-full h-[480px] md:h-[560px]"
-          />
-          <div className="absolute -bottom-6 -left-6 bg-card rounded-2xl px-5 py-4 shadow-warm flex items-center gap-3 max-w-[260px]">
+          <picture>
+            <source srcSet={heroImgWebp} type="image/webp" />
+            <img
+              src={heroImg}
+              alt="Crianças brincando alegremente na Encantadamente Creche"
+              width={1920}
+              height={1080}
+              fetchPriority="high"
+              decoding="async"
+              className="relative rounded-[2rem] shadow-warm object-cover w-full h-[480px] md:h-[560px]"
+            />
+          </picture>
+          <div className="absolute -bottom-6 -left-6 bg-card rounded-2xl px-5 py-4 shadow-warm flex items-center gap-3 max-w-[260px] animate-in fade-in slide-in-from-left-3 duration-700 [animation-delay:600ms] [animation-fill-mode:backwards]">
             <span className="grid place-items-center w-10 h-10 rounded-full bg-secondary text-secondary-foreground">
               <ShieldCheck className="w-5 h-5" />
             </span>
@@ -223,6 +304,7 @@ function Hero() {
           </div>
         </div>
       </div>
+
     </section>
   );
 }
@@ -238,8 +320,10 @@ function TrustStrip() {
     <div className="border-y border-border bg-card/60">
       <div className="mx-auto max-w-7xl px-5 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
         {items.map(({ icon: Icon, label }) => (
-          <div key={label} className="flex items-center gap-3 text-sm">
-            <Icon className="w-5 h-5 text-primary" />
+          <div key={label} className="group flex items-center gap-3 text-sm">
+            <span className="grid place-items-center w-8 h-8 rounded-full bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <Icon className="w-4 h-4" />
+            </span>
             <span className="font-medium">{label}</span>
           </div>
         ))}
@@ -262,7 +346,7 @@ function ProblemSolution() {
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:py-28">
       <div className="grid md:grid-cols-2 gap-10 items-start">
-        <div>
+        <Reveal>
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">Para pais que se preocupam</p>
           <h2 className="mt-3 font-display text-4xl md:text-5xl font-medium leading-tight">
             Deixar seu filho aos cuidados de alguém é uma decisão de coração.
@@ -271,20 +355,20 @@ function ProblemSolution() {
             Sabemos o tamanho dessa escolha. Por isso criamos um espaço onde o acolhimento vem primeiro
             — e onde cada criança é vista, ouvida e estimulada no seu tempo.
           </p>
-        </div>
+        </Reveal>
         <div className="grid sm:grid-cols-2 gap-4">
-          <div className="rounded-3xl bg-muted p-6">
+          <Reveal delay={100} className="rounded-3xl bg-muted p-6 transition-transform hover:-rotate-1">
             <h3 className="text-base font-semibold text-foreground">Preocupações comuns</h3>
             <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
               {problems.map(p => <li key={p} className="flex gap-2">— {p}</li>)}
             </ul>
-          </div>
-          <div className="rounded-3xl bg-primary text-primary-foreground p-6 shadow-warm">
+          </Reveal>
+          <Reveal delay={220} className="rounded-3xl bg-primary text-primary-foreground p-6 shadow-warm transition-transform hover:rotate-1">
             <h3 className="text-base font-semibold">Nossa resposta</h3>
             <ul className="mt-4 space-y-3 text-sm opacity-95">
               {solutions.map(p => <li key={p} className="flex gap-2">✓ {p}</li>)}
             </ul>
-          </div>
+          </Reveal>
         </div>
       </div>
     </section>
@@ -295,18 +379,21 @@ function Features() {
   const cards = [
     {
       img: bercarioImg,
+      imgWebp: bercarioImgWebp,
       tag: "Berçário",
       title: "Berçário acolhedor",
       desc: "Cuidado individualizado, rotina afetiva e ambiente seguro para os primeiros passos do seu bebê.",
     },
     {
       img: educacaoImg,
+      imgWebp: educacaoImgWebp,
       tag: "Educação Infantil",
       title: "Aprender brincando",
       desc: "Atividades lúdicas que despertam a curiosidade, a criatividade e o desenvolvimento integral.",
     },
     {
       img: tempoImg,
+      imgWebp: tempoImgWebp,
       tag: "Tempo Integral · Hotelzinho",
       title: "Sua rotina, sem estresse",
       desc: "Sistema de Tempo Integral (STI) e Hotelzinho para acompanhar a agenda da família com tranquilidade.",
@@ -315,25 +402,30 @@ function Features() {
   return (
     <section id="servicos" className="bg-card border-y border-border">
       <div className="mx-auto max-w-7xl px-5 py-20 md:py-28">
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">Nossos serviços</p>
           <h2 id="diferenciais" className="mt-3 font-display text-4xl md:text-5xl font-medium leading-tight">
             Tudo o que sua família precisa, sob o mesmo teto.
           </h2>
-        </div>
+        </Reveal>
         <div className="mt-12 grid md:grid-cols-3 gap-6">
-          {cards.map(c => (
-            <article key={c.title} className="group rounded-3xl overflow-hidden bg-background border border-border hover:shadow-warm transition-all">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img src={c.img} alt={c.title} loading="lazy" width={1024} height={768}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-              </div>
-              <div className="p-6">
-                <span className="text-xs font-semibold uppercase tracking-wider text-primary">{c.tag}</span>
-                <h3 className="mt-2 font-display text-2xl font-medium">{c.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
-              </div>
-            </article>
+          {cards.map((c, i) => (
+            <Reveal key={c.title} delay={i * 120}>
+              <article className="group rounded-3xl overflow-hidden bg-background border border-border hover:shadow-warm transition-all hover:-translate-y-1">
+                <div className="aspect-[4/3] overflow-hidden">
+                  <picture>
+                    <source srcSet={c.imgWebp} type="image/webp" />
+                    <img src={c.img} alt={`${c.title} — Encantadamente Creche, Maraponga, Fortaleza`} loading="lazy" decoding="async" width={1024} height={768}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  </picture>
+                </div>
+                <div className="p-6">
+                  <span className="text-xs font-semibold uppercase tracking-wider text-primary">{c.tag}</span>
+                  <h3 className="mt-2 font-display text-2xl font-medium">{c.title}</h3>
+                  <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{c.desc}</p>
+                </div>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -349,13 +441,17 @@ function About() {
   ];
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:py-28 grid md:grid-cols-5 gap-10 items-center">
-      <div className="md:col-span-2 relative">
+      <Reveal className="md:col-span-2 relative">
+        <div className="absolute -inset-3 rounded-[2.25rem] bg-linear-to-br from-blush/50 via-transparent to-sage/40 -rotate-2" aria-hidden />
         <div className="aspect-square rounded-[2rem] bg-secondary/30" />
-        <img src={bercarioImg} alt="Carinho na Encantadamente"
-          width={1024} height={1024} loading="lazy"
-          className="absolute inset-4 rounded-[1.75rem] object-cover shadow-warm" />
-      </div>
-      <div className="md:col-span-3">
+        <picture>
+          <source srcSet={bercarioImgWebp} type="image/webp" />
+          <img src={bercarioImg} alt="Educadora acolhendo criança com carinho na Encantadamente Creche, Maraponga"
+            width={1024} height={1024} loading="lazy" decoding="async"
+            className="absolute inset-4 rounded-[1.75rem] object-cover shadow-warm" />
+        </picture>
+      </Reveal>
+      <Reveal delay={120} className="md:col-span-3">
         <p className="text-sm font-semibold uppercase tracking-widest text-primary">Nossa filosofia</p>
         <h2 className="mt-3 font-display text-4xl md:text-5xl font-medium leading-tight">
           Educar com afeto. Cuidar com propósito.
@@ -373,7 +469,7 @@ function About() {
             </div>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -384,44 +480,127 @@ function Testimonials() {
       quote: "Meu filho chega em casa todos os dias contando o que aprendeu. A equipe é atenciosa e o ambiente, muito acolhedor.",
       name: "Mariana S.",
       role: "mãe do Bento, 3 anos",
+      when: "há 2 semanas",
     },
     {
       quote: "O tempo integral salvou nossa rotina. Saio para trabalhar tranquila, sabendo que ela está em boas mãos.",
       name: "Camila R.",
       role: "mãe da Helena, 2 anos",
+      when: "há 1 mês",
     },
     {
       quote: "Encontramos muito mais do que uma creche — encontramos uma família que cuida do nosso bebê com carinho.",
       name: "Rafael e Júlia",
       role: "pais do Théo, 11 meses",
+      when: "há 3 semanas",
     },
   ];
   return (
     <section id="depoimentos" className="bg-secondary/15">
       <div className="mx-auto max-w-7xl px-5 py-20 md:py-28">
-        <div className="max-w-2xl">
+        <Reveal className="max-w-2xl">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary">Famílias Encantadamente</p>
           <h2 className="mt-3 font-display text-4xl md:text-5xl font-medium leading-tight">
             Quem confia, recomenda.
           </h2>
-        </div>
+        </Reveal>
         <div className="mt-12 grid md:grid-cols-3 gap-6">
-          {items.map(t => (
-            <figure key={t.name} className="rounded-3xl bg-card border border-border p-7 flex flex-col">
-              <div className="flex text-primary mb-4">
-                {[...Array(5)].map((_,i)=><Star key={i} className="w-4 h-4" fill="currentColor" />)}
-              </div>
-              <blockquote className="text-foreground leading-relaxed font-display text-xl">
-                "{t.quote}"
-              </blockquote>
-              <figcaption className="mt-6 text-sm">
-                <div className="font-semibold">{t.name}</div>
-                <div className="text-muted-foreground">{t.role}</div>
-              </figcaption>
-            </figure>
+          {items.map((t, i) => (
+            <Reveal key={t.name} delay={i * 120}>
+              <figure className="relative overflow-hidden rounded-3xl bg-card border border-border p-7 flex flex-col h-full transition-transform hover:-translate-y-1">
+                <span className="pointer-events-none absolute -top-4 -right-2 font-display text-[7rem] leading-none text-primary/10 select-none" aria-hidden>"</span>
+                <div className="flex text-primary mb-4">
+                  {[...Array(5)].map((_,i)=><Star key={i} className="w-4 h-4" fill="currentColor" />)}
+                </div>
+                <blockquote className="relative text-foreground leading-relaxed font-display text-xl">
+                  "{t.quote}"
+                </blockquote>
+                <figcaption className="mt-6 flex items-end justify-between gap-3 text-sm">
+                  <div>
+                    <div className="font-semibold">{t.name}</div>
+                    <div className="text-muted-foreground">{t.role}</div>
+                  </div>
+                  <span className="shrink-0 text-xs text-muted-foreground/80">{t.when}</span>
+                </figcaption>
+              </figure>
+            </Reveal>
           ))}
         </div>
       </div>
+    </section>
+  );
+}
+
+function FAQ() {
+  const faqs = [
+    {
+      q: "Quanto custa a mensalidade da creche?",
+      a: "Os valores variam conforme o plano (meio período, tempo integral ou hotelzinho). Fale com a gente pelo WhatsApp para receber uma proposta personalizada para o seu caso.",
+    },
+    {
+      q: "A partir de que idade a creche recebe crianças?",
+      a: "Recebemos desde bebês, no berçário, acompanhando o desenvolvimento até a fase de Educação Infantil — sempre com cuidado individualizado e ambiente seguro.",
+    },
+    {
+      q: "Qual o horário de funcionamento da Encantadamente?",
+      a: "Funcionamos de segunda a sexta-feira, das 7h às 18h, em Maraponga, Fortaleza.",
+    },
+    {
+      q: "O que é o Sistema de Tempo Integral (STI)?",
+      a: "É o nosso regime de tempo integral, pensado para acompanhar a rotina da família com tranquilidade, unindo cuidado afetivo e atividades pedagógicas ao longo de todo o dia.",
+    },
+    {
+      q: "E o Hotelzinho, como funciona?",
+      a: "O Hotelzinho é um serviço complementar ao Tempo Integral, para os dias em que a família precisa de mais flexibilidade de horário — sem abrir mão do cuidado de sempre.",
+    },
+    {
+      q: "Como faço para agendar uma visita ou matricular meu filho?",
+      a: "É simples: chame no WhatsApp (85) 98973-9830 ou preencha o formulário abaixo. Agendamos uma visita guiada, sem compromisso, para conhecer nossa estrutura em Maraponga.",
+    },
+    {
+      q: "Ainda há vagas para matrícula em 2026?",
+      a: "As matrículas para 2026 estão abertas, mas as vagas são limitadas. Recomendamos agendar sua visita o quanto antes para garantir o período desejado.",
+    },
+    {
+      q: "A Encantadamente é uma creche particular ou escola infantil?",
+      a: "Somos uma creche e escola infantil particular em Maraponga, Fortaleza, com equipe pedagógica própria e proposta de ensino voltada para a primeira infância.",
+    },
+  ];
+
+  return (
+    <section id="faq" className="bg-card border-y border-border">
+      <div className="mx-auto max-w-3xl px-5 py-20 md:py-28">
+        <Reveal className="text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-primary">Perguntas frequentes</p>
+          <h2 className="mt-3 font-display text-4xl md:text-5xl font-medium leading-tight">
+            Tudo o que você precisa saber.
+          </h2>
+        </Reveal>
+        <Reveal delay={100} className="mt-10">
+          <Accordion type="single" collapsible>
+            {faqs.map((item) => (
+              <AccordionItem key={item.q} value={item.q}>
+                <AccordionTrigger className="font-display text-lg">{item.q}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground leading-relaxed">{item.a}</AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Reveal>
+      </div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map((item) => ({
+              "@type": "Question",
+              name: item.q,
+              acceptedAnswer: { "@type": "Answer", text: item.a },
+            })),
+          }),
+        }}
+      />
     </section>
   );
 }
@@ -476,7 +655,7 @@ function LeadForm() {
 
   return (
     <section id="contato" className="mx-auto max-w-7xl px-5 py-20 md:py-28">
-      <div className="rounded-[2.5rem] overflow-hidden bg-grain border border-border grid md:grid-cols-2">
+      <Reveal className="rounded-[2.5rem] overflow-hidden bg-grain border border-border grid md:grid-cols-2">
         <div className="p-10 md:p-14">
           <span className="inline-flex items-center gap-2 rounded-full bg-primary/10 text-primary px-3 py-1 text-xs font-semibold">
             <Users className="w-3.5 h-3.5" /> Vagas limitadas
@@ -516,14 +695,14 @@ function LeadForm() {
             <Label htmlFor="message">Mensagem (opcional)</Label>
             <Textarea id="message" name="message" maxLength={500} rows={3} className="mt-2 rounded-xl bg-background" placeholder="Conte-nos um pouco sobre o que procura." />
           </div>
-          <Button type="submit" size="lg" disabled={loading} className="w-full rounded-full shadow-warm">
+          <Button type="submit" size="lg" disabled={loading} className="w-full rounded-full shadow-warm transition-transform hover:-translate-y-0.5">
             {loading ? "Abrindo WhatsApp..." : "Quero agendar uma visita"}
           </Button>
           <p className="text-xs text-muted-foreground text-center">
             Você será direcionado ao WhatsApp com seus dados preenchidos.
           </p>
         </form>
-      </div>
+      </Reveal>
     </section>
   );
 }
@@ -560,19 +739,16 @@ function Footer() {
   return (
     <footer className="bg-background">
       <div className="mx-auto max-w-7xl px-5 py-12 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-2">
-          <span className="grid place-items-center w-9 h-9 rounded-full bg-primary text-primary-foreground">
-            <Heart className="w-4 h-4" fill="currentColor" />
-          </span>
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="Encantadamente Creche" width={132} height={52} className="h-10 w-auto" />
           <div>
-            <div className="font-display text-lg font-semibold leading-none">Encantadamente Creche</div>
-            <div className="text-xs text-muted-foreground mt-1">Maraponga · Fortaleza/CE</div>
+            <div className="text-xs text-muted-foreground">Rua Paurilo Barroso, 707 — Maraponga, Fortaleza/CE</div>
+            <a href="tel:+5585989739830" className="text-xs text-muted-foreground hover:text-primary transition">(85) 98973-9830</a>
           </div>
         </div>
         <div className="flex items-center gap-5 text-muted-foreground">
           <a href="https://www.instagram.com/encantadamentecreche/" target="_blank" rel="noreferrer" aria-label="Instagram" className="hover:text-primary transition"><Instagram className="w-5 h-5" /></a>
-          <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="hover:text-primary transition"><Facebook className="w-5 h-5" /></a>
-          <a href="mailto:contato@encantadamente.com.br" aria-label="Email" className="hover:text-primary transition"><Mail className="w-5 h-5" /></a>
+          <a href="mailto:contato@crecheencantadamente.com" aria-label="Email" className="hover:text-primary transition"><Mail className="w-5 h-5" /></a>
         </div>
         <div className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} Encantadamente. Todos os direitos reservados.

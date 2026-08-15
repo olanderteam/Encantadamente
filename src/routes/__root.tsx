@@ -74,12 +74,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Encantadamente Creche — Berçário e Educação Infantil em Fortaleza" },
       { name: "description", content: "Creche em Maraponga, Fortaleza com berçário, educação infantil, tempo integral e hotelzinho. Agende uma visita." },
+      { name: "robots", content: "index, follow" },
       { property: "og:title", content: "Encantadamente Creche — Maraponga, Fortaleza" },
       { property: "og:description", content: "Onde a infância floresce: cuidado, carinho e educação em tempo integral." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:site_name", content: "Encantadamente Creche" },
+      { property: "og:image", content: "https://www.crecheencantadamente.com/og.jpg" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://www.crecheencantadamente.com/og.jpg" },
     ],
     links: [
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
         href: appCss,
@@ -97,6 +106,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        {/* Google Tag Manager */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-WZ9CWGHN');`,
+          }}
+        />
+        {/* End Google Tag Manager */}
         {/* Google Ads */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18119200665" />
         <script
@@ -108,6 +128,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <script async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/4f87e96d-4aa1-4f29-a69d-69e962a8f3df-loader.js" />
       </head>
       <body>
+        {/* Google Tag Manager (noscript) */}
+        <noscript>
+          <iframe
+            src="https://www.googletagmanager.com/ns.html?id=GTM-WZ9CWGHN"
+            height="0"
+            width="0"
+            style={{ display: "none", visibility: "hidden" }}
+            title="Google Tag Manager"
+          />
+        </noscript>
+        {/* End Google Tag Manager (noscript) */}
         {children}
         <Scripts />
       </body>
